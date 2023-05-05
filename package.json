@@ -1,0 +1,34 @@
+{
+  "name": "restaurantwebsite",
+  "version": "1.0.0",
+  "description": "restaurantwebsite MERN Project",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "nodemon backend/server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@fortawesome/ffree-solid-svg-icons": "file:fortawesome/fontawesome-react-icons@fortawesome/fontawesome",
+    "@fortawesome/fontawesome-svg-core": "^6.4.0",
+    "bcrypt": "^5.0.1",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "date-fns": "^2.29.1",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.1",
+    "express-async-handler": "^1.2.0",
+    "express-rate-limit": "^6.7.0",
+    "jsonwebtoken": "^9.0.0",
+    "mongoose": "^6.5.0",
+    "mongoose-sequence": "^5.3.1",
+    "react-router-dom": "^6.11.1",
+    "uuid": "^8.3.2",
+    "validator": "^13.9.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.19"
+  }
+}

@@ -1,0 +1,92 @@
+Restaurant Website
+
+Frontend
+- React JS
+- Redux
+- Tailwind
+
+Backend
+- Node JS
+- Express JS
+- MongoDB
+
+Dependencies:
+- express
+- nodemon
+- uuid
+- dotenv
+- mongoose
+- mongoose-sequence
+- react-router-dom
+- validator
+- bcrypt
+
+Important links for reference:
+- https://www.youtube.com/watch?v=AN3t-OmdyKA
+
+
+May 4, 2023
+- Copied the 04tut complete code from the MERN Note app
+- started the 08tut tutorial from MERN Note app (authRoute, authController)
+- create the login, refresh, logout on authController
+* Problem
+    - I can't send a request in Postman, it is always "Unauthorized"
+
+May 5, 2023
+- Roles: [Customer, Employee, Admin]
+* Sidebar for the admin website
+    - Dashboard
+    - Admin
+        - Can add Employee
+        - Can edit Employee
+        - Can delete Employee (Active/NotActive refer from tutorial of dave)
+        
+    - Menu
+        - Can see all the dishes 
+        - Can edit dish info
+        - Can edit Available/NotAvailable dish
+        - Can add dish (button)
+        - Can delete dish (button)
+        * Dish
+            - Dish Name
+            - Price
+            - Category
+            - Available/NotAvailable
+            - (Add more if necessary)
+            - Add 1 or 3 photos 
+    - Orders
+        - List of orders
+        - Can click the orders and view the details.
+        * Order details
+            - Customer Name
+            - Phone
+            - Address
+            - Payment status (Paid???  COD/Credit card "LEARN HOW TO IMPLEMENT STRIPE")
+            - Order status
+            - Dish
+        - Can change the order status if Delivered or not
+    - Users
+        - Can see all users
+        - Can click a user and see information(name, address) and purchase history
+        - Can add users
+        - Can delete users
+        - Can edit user (???)
+    - Reviews (??? Not sure kung isasama pa)
+    - Logout (2: for admin and employee, for customer)
+    - Login (2: for admin and employee, for customer)
+        - Username (email)
+        - Password
+    - Register (2: for admin and employee, for customer)
+* Logics:
+    Employee can CRUD customer
+    Admin can CRUD employee
+    Admin can CRUD employee
+    Admin can change the role of employee (so that the employee can use her/his own account to order)
+    Employee account cannot be access /Admin path if he/she have a pending order
+    Customer cannot access the /Admin path
+    Product cannot be deleted if there is still pending Order from a Customer
+    Customer must only have one account per email
+* Tasks Today
+    - check the backend restAPI, use the userRoute, userController
+* Tasks for next session
+    - code the css, add the pages (can refer from ecommerce tutorial hindi video)
