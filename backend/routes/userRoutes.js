@@ -5,10 +5,25 @@ const usersController = require('../controllers/usersController')
 
 // router.use(verifyJWT)
 
-router.route('/')
+// Customer
+router.route('/users/orders')
+    .get(usersController.getUserOrders)
+
+// Admin
+
+router.route('/admin/users/orders')
+    .get(usersController.getUserOrders)
+
+router.route('/admin/users')
     .get(usersController.getAllUsers)
+    
+
+router.route('/admin/users/new')
     .post(usersController.createNewUser)
+
+router.route('/admin/users/:id')
     .patch(usersController.updateUser)
     .delete(usersController.deleteUser)
+    .get(usersController.getUserInfo)
 
 module.exports = router

@@ -1,9 +1,10 @@
 const User = require('../models/User')
+const Order = require('../models/Order')
 const asyncHandler = require('express-async-handler')
 const bcrypt = require('bcrypt')
 
-// @desc Get all users
-// @route GET /users
+// @desc Get all users in admin
+// @route GET /admin/users
 // @access Private
 const getAllUsers = asyncHandler(async (req, res) => {
     // Get all users from MongoDB
@@ -16,6 +17,41 @@ const getAllUsers = asyncHandler(async (req, res) => {
 
     res.json(users)
 })
+
+// @desc Get user info in admin
+// @route GET /users
+// @access Private
+const getUserInfo = asyncHandler(async (req, res) => {
+
+    const { id } = req.body
+
+    const user = await User.findById(id).exec()
+    
+    // Confirm if product exists
+    if(!user) {
+        return res.status(400).json({ message: 'User not found' })
+    }
+
+    return res.status(201).json({ success: true, product })
+})
+
+
+// @desc Get order history of customer in customer and admin
+// @route GET users/orders
+// @access Private
+const getUserOrders = asyncHandler(async (req, res) => {
+
+    const { id } = req.body
+    
+    // Show all orders of user
+    const orders = await Order.find({ user: id }).lean().exec()
+
+    res.status(200).json({
+        success: true,
+        orders,
+    });
+    });
+
 
 // @desc Create new user
 // @route POST /users
@@ -105,19 +141,13 @@ const updateUser = asyncHandler(async (req, res) => {
 const deleteUser = asyncHandler(async (req, res) => {
     const { id } = req.body
 
-    // Confirm data
-    if (!id) {
-        return res.status(400).json({ message: 'User ID Required' })
-    }
-
-    // Does the user still have assigned notes?
-    const note = await Note.findOne({ user: id }).lean().exec()
-    if (note) {
-        return res.status(400).json({ message: 'User has assigned notes' })
-    }
-
     // Does the user exist to delete?
     const user = await User.findById(id).exec()
+
+    // Confirm if product exists
+    if(!product) {
+        return res.status(400).json({ message: 'Product not found' })
+    }
 
     const result = await user.deleteOne()
 
@@ -126,9 +156,12 @@ const deleteUser = asyncHandler(async (req, res) => {
     res.json(reply)
 })
 
+
 module.exports = {
     getAllUsers,
     createNewUser,
     updateUser,
-    deleteUser
+    deleteUser,
+    getUserInfo,
+    getUserOrders
 }
