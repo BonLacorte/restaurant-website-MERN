@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 
-const DashHeader = () => {
+const AdminDashHeader = () => {
 
     const content = (
         <header className="mx-auto w-3/5  ">
@@ -8,23 +8,20 @@ const DashHeader = () => {
                 {/* add nav buttons later */}
                 <div className='w-full container mx-auto flex items-center justify-between mt-0 py-2 '>
                     <div className='pl-4 flex items-center '>
-                        <Link to="/dash">
+                        <Link to="/admin/dash">
                             <h1 className="lg">techNotes</h1>
                         </Link>
                     </div>
                     <div className='nav-menu-wrapper flex flex-row space-x-20'>
                         <div className='nav-menu-wrapper  flex flex-row space-x-4'>
-                            <p><Link to="/dash/menu">Menu</Link></p>
-                            <p><Link to="/dash/about">About</Link></p>
-                            <p><Link to="/dash/gallery">Gallery</Link></p>
-                            <p><Link to="/dash/contact">Contact</Link></p>
+                            <p><Link to="/admin/dash/menu">Menu</Link></p>
+                            <p><Link to="/admin/dash/orders">Orders</Link></p>
+                            <p><Link to="/admin/dash/users">Users</Link></p>
                         </div>
                         <div className='nav-menu-wrapper  flex flex-row space-x-4'>
-                            <p><Link to="/dash/cart">Cart</Link></p>
-                            <p><Link to="/register">Register</Link></p>
-                            <p><Link to="/login">Login</Link></p>
-                            <p><Link to="/dash/users">User</Link></p>
-                            <p><Link to="/admin/dash">Admin</Link></p>
+                            <p><Link to="/admin/register">Register</Link></p>
+                            <p><Link to="/admin/login">Login</Link></p>
+                            <p><Link to="/dash">Customer</Link></p>
                         </div>
                     </div>
                     
@@ -35,4 +32,4 @@ const DashHeader = () => {
 
     return content
 }
-export default DashHeader
+export default AdminDashHeader

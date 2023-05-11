@@ -6,6 +6,7 @@ const asyncHandler = require('express-async-handler')
 // @route GET products
 // @access Private
 const getAllOrders = asyncHandler(async (req, res) => {
+    // Get all orders from MongoDB
     const orders = await Order.find();
 
     let totalAmount = 0;
@@ -14,12 +15,8 @@ const getAllOrders = asyncHandler(async (req, res) => {
         totalAmount += order.totalPrice;
     });
 
-    res.status(200).json({
-        success: true,
-        totalAmount,
-        orders,
-    });
-    });
+    res.json(orders);
+});
 
 // @desc Get order info customer and admin
 // @route GET products

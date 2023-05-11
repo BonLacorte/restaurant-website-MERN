@@ -26,4 +26,10 @@ router.route('/admin/users/:id')
     .delete(usersController.deleteUser)
     .get(usersController.getUserInfo)
 
+// router.route('/')
+//     .get(usersController.getAllUsers)
+//     .post(usersController.createNewUser)
+//     .patch(usersController.updateUser)
+//     .delete(usersController.deleteUser)
+
 module.exports = router

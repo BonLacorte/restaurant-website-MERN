@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 
-const Welcome = () => {
+const AdminDash = () => {
 
     const date = new Date()
     const today = new Intl.DateTimeFormat('en-US', { dateStyle: 'full', timeStyle: 'long' }).format(date)
@@ -10,7 +10,7 @@ const Welcome = () => {
 
             <p>{today}</p>
 
-            <h1>Welcome!</h1>
+            <h1>Welcome! to Admin Dashboard</h1>
 
             {/* <p><Link to="/dash/menu">View Menu</Link></p>
 
@@ -25,4 +25,4 @@ const Welcome = () => {
 
     return content
 }
-export default Welcome
+export default AdminDash

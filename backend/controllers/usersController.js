@@ -115,8 +115,8 @@ const updateUser = asyncHandler(async (req, res) => {
 
     user.firstname = firstname
     user.lastname = lastname
-    //user.email = email
-    //user.roles = roles
+    user.email = email
+    user.roles = roles
     user.mobileNumber = mobileNumber
 
     if (password) {
@@ -144,9 +144,9 @@ const deleteUser = asyncHandler(async (req, res) => {
     // Does the user exist to delete?
     const user = await User.findById(id).exec()
 
-    // Confirm if product exists
-    if(!product) {
-        return res.status(400).json({ message: 'Product not found' })
+    // Confirm if user exists
+    if(!user) {
+        return res.status(400).json({ message: 'User was not found' })
     }
 
     const result = await user.deleteOne()

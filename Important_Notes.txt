@@ -20,6 +20,10 @@ Dependencies:
 - react-router-dom
 - validator
 - bcrypt
+- npx create-react-app .
+- npx tailwindcss init -p
+- @redux/toolkit 
+- react-redux
 
 Important links for reference:
 - https://www.youtube.com/watch?v=AN3t-OmdyKA
@@ -93,3 +97,6 @@ May 5, 2023
 
 May 5, 2023
 * Continue on OrdersController
+
+May 7, 2023
+* 
