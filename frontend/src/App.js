@@ -15,14 +15,16 @@ import Admin from './Admin/Admin';
 import AdminDashLayout from './Admin/components/AdminDashLayout';
 import AdminDash from './Admin/features/auth/AdminDash';
 import AdminMenu from './Admin/features/menu/AdminMenu';
-import AdminOrders from './Admin/features/orders/AdminOrders';
-import AdminUsersList from './Admin/features/user/AdminUsersLists';
 import AdminRegister from './Admin/features/auth/AdminRegister';
 import AdminLogin from './Admin/features/auth/AdminLogin';
 import AdminEditUser from './Admin/features/user/AdminEditUser';
 import AdminNewUserForm from './Admin/features/user/AdminNewUserForm';
 import AdminPrefetch from './Admin/features/auth/AdminPrefetch';
 import Prefetch from './features/auth/Prefetch';
+import AdminOrdersLists from './Admin/features/orders/AdminOrdersLists';
+import AdminEditOrder from './Admin/features/orders/AdminEditOrder';
+import AdminNewOrderForm from './Admin/features/orders/AdminNewOrderForm';
+import AdminUsersList from './Admin/features/user/AdminUsersLists';
 
 function App() {
   return (
@@ -79,7 +81,9 @@ function App() {
             </Route>
 
             <Route path="orders"> 
-              <Route index element={<AdminOrders />} />
+              <Route index element={<AdminOrdersLists />} />
+              <Route path=":id" element={<AdminEditOrder />}/>
+              <Route path="new" element={<AdminNewOrderForm />}/>
             </Route>
 
             <Route path="users"> 

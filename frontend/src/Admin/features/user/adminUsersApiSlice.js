@@ -11,7 +11,7 @@ const initialState = usersAdapter.getInitialState()
 export const adminUsersApiSlice = apiSlice.injectEndpoints({
     endpoints: builder => ({
         getUsers: builder.query({
-            query: () => 'admin/users',
+            query: () => `/users`,
             validateStatus: (response, result) => {
                 return response.status === 200 && !result.isError
             },
@@ -34,7 +34,7 @@ export const adminUsersApiSlice = apiSlice.injectEndpoints({
         }),
         addNewUser: builder.mutation({
             query: initialUserData => ({
-                url: 'admin/users/new',
+                url: `/users`,
                 method: 'POST',
                 body: {
                     ...initialUserData,
@@ -46,7 +46,7 @@ export const adminUsersApiSlice = apiSlice.injectEndpoints({
         }),
         updateUser: builder.mutation({
             query: initialUserData => ({
-                url: 'admin/users/:id',
+                url: `/users`,
                 method: 'PATCH',
                 body: {
                     ...initialUserData,
@@ -58,7 +58,7 @@ export const adminUsersApiSlice = apiSlice.injectEndpoints({
         }),
         deleteUser: builder.mutation({
             query: ({ id }) => ({
-                url: `admin/users/:id`,
+                url: `/users`,
                 method: 'DELETE',
                 body: { id }
             }),
