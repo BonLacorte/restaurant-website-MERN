@@ -6,7 +6,7 @@ const AdminDashLayout = () => {
     return (
         <>
             <AdminDashHeader />
-            <div className="dash-container">
+            <div className="mx-auto w-3/4  ">
                 <Outlet />
             </div>
             <AdminDashFooter />

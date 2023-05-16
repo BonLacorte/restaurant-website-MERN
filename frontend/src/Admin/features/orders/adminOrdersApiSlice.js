@@ -11,11 +11,12 @@ const initialState = ordersAdapter.getInitialState()
 export const adminOrdersApiSlice = apiSlice.injectEndpoints({
     endpoints: builder => ({
         getOrders: builder.query({
-            query: () => '/orders',
+            query: () => '/admin/orders',
             validateStatus: (response, result) => {
                 return response.status === 200 && !result.isError
             },
             transformResponse: responseData => {
+                
                 const loadedOrders = responseData.map(order => {
                     order.id = order._id
                     return order
@@ -33,7 +34,7 @@ export const adminOrdersApiSlice = apiSlice.injectEndpoints({
         }),
         addNewOrder: builder.mutation({
             query: initialOrder => ({
-                url: `/orders`,
+                url: '/admin/orders/new',
                 method: 'POST',
                 body: {
                     ...initialOrder,
@@ -45,7 +46,7 @@ export const adminOrdersApiSlice = apiSlice.injectEndpoints({
         }),
         updateOrder: builder.mutation({
             query: initialOrder => ({
-                url: `/orders`,
+                url: '/admin/orders/:id',
                 method: 'PATCH',
                 body: {
                     ...initialOrder,
@@ -57,7 +58,7 @@ export const adminOrdersApiSlice = apiSlice.injectEndpoints({
         }),
         deleteOrder: builder.mutation({
             query: ({ id }) => ({
-                url: `/orders`,
+                url: '/admin/orders/:id',
                 method: 'DELETE',
                 body: { id }
             }),

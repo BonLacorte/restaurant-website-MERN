@@ -10,11 +10,9 @@ import Gallery from './features/gallery/Gallery';
 import Contact from './features/contact/Contact';
 import Register from './features/auth/Register';
 import Cart from './features/cart/Cart';
-import UsersList from './features/user/UsersLists';
 import Admin from './Admin/Admin';
 import AdminDashLayout from './Admin/components/AdminDashLayout';
 import AdminDash from './Admin/features/auth/AdminDash';
-import AdminMenu from './Admin/features/menu/AdminMenu';
 import AdminRegister from './Admin/features/auth/AdminRegister';
 import AdminLogin from './Admin/features/auth/AdminLogin';
 import AdminEditUser from './Admin/features/user/AdminEditUser';
@@ -24,7 +22,11 @@ import Prefetch from './features/auth/Prefetch';
 import AdminOrdersLists from './Admin/features/orders/AdminOrdersLists';
 import AdminEditOrder from './Admin/features/orders/AdminEditOrder';
 import AdminNewOrderForm from './Admin/features/orders/AdminNewOrderForm';
-import AdminUsersList from './Admin/features/user/AdminUsersLists';
+import AdminUsersLists from './Admin/features/user/AdminUsersLists';
+import Users from './features/user/User';
+// import AdminEditProduct from './Admin/features/products/AdminEditProduct';
+import AdminNewProductForm from './Admin/features/products/AdminNewProductForm';
+import AdminProductsLists from './Admin/features/products/AdminProductsLists';
 
 function App() {
   return (
@@ -60,7 +62,7 @@ function App() {
             </Route>
 
             <Route path="users">
-              <Route index element={<UsersList />} />
+              <Route index element={<Users />} />
             </Route>
 
           </Route>{/* End Dash */}
@@ -76,8 +78,10 @@ function App() {
           
             <Route index element={<AdminDash />} />
 
-            <Route path="menu"> 
-              <Route index element={<AdminMenu />} />
+            <Route path="products"> 
+              <Route index element={<AdminProductsLists />} />
+              {/* <Route path=":id" element={<AdminEditProduct />}/> */}
+              <Route path="new" element={<AdminNewProductForm />}/>
             </Route>
 
             <Route path="orders"> 
@@ -87,7 +91,7 @@ function App() {
             </Route>
 
             <Route path="users"> 
-              <Route index element={<AdminUsersList />} />
+              <Route index element={<AdminUsersLists />} />
               <Route path=":id" element={<AdminEditUser />}/>
               <Route path="new" element={<AdminNewUserForm />}/>
             </Route>

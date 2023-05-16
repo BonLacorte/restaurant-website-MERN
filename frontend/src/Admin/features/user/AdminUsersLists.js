@@ -34,18 +34,21 @@ const AdminUsersList = () => {
 
         content = (
             <>
-                <table className="table table--users">
-                <thead className="table__thead">
-                    <tr>
-                        <th scope="col" className="table__th user__username">Username</th>
-                        <th scope="col" className="table__th user__roles">Roles</th>
-                        <th scope="col" className="table__th user__edit">Edit</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {tableContent}
-                </tbody>
-            </table>
+                <div className="flex justify-center">
+                    <table className="w-3/4 bg-black text-white">
+                        <thead className>
+                            <tr>
+                                <th scope="col" className="px-6 py-3 bg-gray-800 text-left text-sm font-medium">Username</th>
+                                <th scope="col" className="px-6 py-3 bg-gray-800 text-left text-sm font-medium">Roles</th>
+                                <th scope="col" className="px-6 py-3 bg-gray-800 text-left text-sm font-medium">Edit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {tableContent}
+                        </tbody>
+                    </table>
+                </div>
+                
             <div className="my-10">
                 <p><Link to="/admin/dash/users/new">Add a new User</Link></p>
             </div>

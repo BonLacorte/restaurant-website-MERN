@@ -1,12 +1,26 @@
 const Product = require("../models/Product");
 const asyncHandler = require('express-async-handler')
-const bcrypt = require("bcrypt");
 const ApiFeatures = require("../utils/apiFeatures");
+const cloudinary = require("../utils/cloudinary");
 
 // @desc Get all products in customer
 // @route GET products
 // @access Private
+
+
 const getAllProducts = asyncHandler(async (req, res) => {
+    // Get all users from MongoDB
+    const products = await Product.find().select('-password').lean()
+
+    // If no users 
+    if (!products?.length) {
+        return res.status(400).json({ message: 'No users found' })
+    }
+
+    res.json(products)
+})
+
+const getSearchProducts = asyncHandler(async (req, res) => {
     
     const resultPerPage = 8;
     const productsCount = await Product.countDocuments();
@@ -64,37 +78,83 @@ const getProductInfo = asyncHandler(async (req, res) => {
 // @desc Create new product in admin
 // @route POST /admin/products
 // @access Private
-const createNewProduct = asyncHandler(async (req, res) => {
+const createNewProduct = asyncHandler(async (req, res, next) => {
 
-    const product = await Product.create(req.body)
-    return res.status(201).json({ success: true, product })
-
-    // const { name, description, price, password, mobileNumber, roles } = req.body
-
+    const { id, name, description, price, category, image  } = req.body
+    // console.log(req.image) // undefined on yesterday
+    // console.log(req.body) // undefined on yesterday
     // // Confirm data
-    // if (!firstname || !password || !mobileNumber || !Array.isArray(roles) || !roles.length) {
+    // if (!name || !description || !price || !category ) {
     //     return res.status(400).json({ message: 'All fields are required' })
     // }
 
-    // // Check for duplicate product
-    // const duplicate = await User.findOne({ username }).lean().exec()
+    try {
+        const result = await cloudinary.uploader.upload(image, {
+            folder: "products",
+            // width: 300,
+            // crop: "scale"
+        })
+        const product = await Product.create({
+            name,
+            description,
+            price,
+            category,
+            images: {
+                public_id: result.public_id,
+                url: result.secure_url
+            },
+            
+        });
+        console.log(result.public_id)
+        console.log(result.secure_url)
+        res.status(201).json({
+            success: true,
+            product
+        })
 
-    // if (duplicate) {
-    //     return res.status(409).json({ message: 'Duplicate username' })
+    } catch (error) {
+        console.log(error);
+        next(error);
+
+    }
+
+    // try this for multiple images
+    // let images = [];
+
+    // if (typeof req.body.images === "string") {
+    //     images.push(req.body.images);
+    // } else {
+    //     images = req.body.images;
     // }
 
-    // // Hash password 
-    // const hashedPwd = await bcrypt.hash(password, 10) // salt rounds
+    // const imagesLinks = [];
 
-    // const userObject = { username, "password": hashedPwd, roles }
+    // try {
+    //     for (let i = 0; i < images.length; i++) {
+    //         const result = await cloudinary.v2.uploader.upload(images[i], {
+    //             folder: "products",
+    //         });
+        
+    //         imagesLinks.push({
+    //             public_id: result.public_id,
+    //             url: result.secure_url,
+    //         });
+    //     }
 
-    // // Create and store new user 
-    // const user = await User.create(userObject)
+    //     req.body.images = imagesLinks;
+    //     req.body.user = req.user.id;
 
-    // if (user) { //created 
-    //     res.status(201).json({ message: `New user ${username} created` })
-    // } else {
-    //     res.status(400).json({ message: 'Invalid user data received' })
+    //     const product = await Product.create(req.body);
+
+    //     res.status(201).json({
+    //         success: true,
+    //         product,
+    //     });
+
+    // } catch (error) {
+    //     console.log(error);
+    //     next(error);
+
     // }
 })
 
@@ -200,6 +260,7 @@ const deleteProduct = asyncHandler(async (req, res) => {
 
 module.exports = {
     getAllProducts,
+    getSearchProducts,
     getAllProductsAdmin,
     getProductInfo,
     createNewProduct,

@@ -19,11 +19,11 @@ const AdminUsers = ({ userId }) => {
 
         return (
             <tr className="table__row user">
-                <td className={`table__cell ${cellStatus}`}>{user.firstname}</td>
-                <td className={`table__cell ${cellStatus}`}>{userRolesString}</td>
-                <td className={`table__cell ${cellStatus}`}>
+                <td className="px-6 py-3 bg-gray-700 text-left text-sm font-medium">{user.firstname}</td>
+                <td className="px-6 py-3 bg-gray-700 text-left text-sm font-medium">{userRolesString}</td>
+                <td className="px-6 py-3 bg-gray-700 text-left text-sm font-medium">
                     <button
-                        className="icon-button table__button"
+                        
                         onClick={handleEdit}
                     >
                         <FontAwesomeIcon icon={faPenToSquare} />

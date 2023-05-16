@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 const AdminDashHeader = () => {
 
     const content = (
-        <header className="mx-auto w-3/5  ">
+        <header className="mx-auto w-full  ">
             <div className="text-white ">
                 {/* add nav buttons later */}
                 <div className='w-full container mx-auto flex items-center justify-between mt-0 py-2 '>
@@ -14,7 +14,7 @@ const AdminDashHeader = () => {
                     </div>
                     <div className='nav-menu-wrapper flex flex-row space-x-20'>
                         <div className='nav-menu-wrapper  flex flex-row space-x-4'>
-                            <p><Link to="/admin/dash/menu">Menu</Link></p>
+                            <p><Link to="/admin/dash/products">Menu</Link></p>
                             <p><Link to="/admin/dash/orders">Orders</Link></p>
                             <p><Link to="/admin/dash/users">Users</Link></p>
                         </div>

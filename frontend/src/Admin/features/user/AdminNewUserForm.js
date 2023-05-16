@@ -102,11 +102,6 @@ const AdminNewUserForm = () => {
     })
 
     const errClass = isError ? "errmsg" : "offscreen"
-    const validFirstnameClass = !validFirstname ? 'form__input--incomplete' : ''
-    const validLastnameClass = !validLastname ? 'form__input--incomplete' : ''
-    const validPwdClass = !validPassword ? 'form__input--incomplete' : ''
-    const validEmailClass = !validEmail ? 'form__input--incomplete' : ''
-    const validMobileNumberClass = !validMobileNumber ? 'form__input--incomplete' : ''
     const validRolesClass = !Boolean(roles.length) ? 'form__input--incomplete' : ''
 
     const content = (

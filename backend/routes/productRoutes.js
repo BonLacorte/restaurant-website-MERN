@@ -17,7 +17,7 @@ router.route('/admin/products')
     .get(productsController.getAllProducts)
     
 
-router.route('/admin/product/new')
+router.route('/admin/products/new')
     .post(productsController.createNewProduct)
 
 router.route('/admin/product/:id')

@@ -40,9 +40,8 @@ const productSchema = mongoose.Schema({
     },
     available: {
         type: Boolean,
-    default: true,
-    required: true,
-    description: "Indicates whether the product is currently available or not"
+        default: true,
+        description: "Indicates whether the product is currently available or not"
     },
     numOfReviews: {
         type: Number,
