@@ -128,9 +128,7 @@ const AdminNewUserForm = () => {
                             validFirstname ? "text-green-500" : "text-red-500"
                         }`}>[2-25 letters]</span></label>
                     <input
-                        className={`w-full py-2 px-4 mb-4 border ${
-                                    validFirstname ? "border-green-500" : "border-red-500"
-                                } text-black`}
+                        className={`w-full py-2 px-4 mb-4 border text-black border-green-500 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent ${validFirstname === '' ? 'text-gray-400' : ''} `}
                         id="firstname"
                         name="firstname"
                         type="text"
@@ -144,9 +142,7 @@ const AdminNewUserForm = () => {
                             validLastname ? "text-green-500" : "text-red-500"
                         }`}>[2-25 letters]</span></label>
                     <input
-                        className={`w-full py-2 px-4 mb-4 border ${
-                                    validLastname ? "border-green-500" : "border-red-500"
-                                } text-black`}
+                        className={`w-full py-2 px-4 mb-4 border text-black border-green-500 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent ${validLastname === '' ? 'text-gray-400' : ''} `}
                         id="lastname"
                         name="lastname"
                         type="text"
@@ -160,9 +156,7 @@ const AdminNewUserForm = () => {
                             validEmail ? "text-green-500" : "text-red-500"
                         }`}>Validate</span></label>
                     <input
-                        className={`w-full py-2 px-4 mb-4 border ${
-                                    validEmail ? "border-green-500" : "border-red-500"
-                                } text-black`}
+                        className={`w-full py-2 px-4 mb-4 border text-black border-green-500 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent ${validEmail === '' ? 'text-gray-400' : ''} `}
                         id="email"
                         name="email"
                         type="text"
@@ -176,9 +170,7 @@ const AdminNewUserForm = () => {
                             validMobileNumber ? "text-green-500" : "text-red-500"
                         }`}></span></label>
                     <input
-                        className={`w-full py-2 px-4 mb-4 border ${
-                                    validMobileNumber ? "border-green-500" : "border-red-500"
-                                } text-black`}
+                        className={`w-full py-2 px-4 mb-4 border text-black border-green-500 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent ${validMobileNumber === '' ? 'text-gray-400' : ''} `}
                         id="mobileNumber"
                         name="mobileNumber"
                         type="text"
@@ -193,8 +185,7 @@ const AdminNewUserForm = () => {
                                     validPassword ? "text-green-500" : "text-red-500"
                                 }`}>[4-12 chars incl. !@#$%]</span></label>
                     <input
-                        className={`w-full py-2 px-4 mb-4 border 
-                        ${ validPassword ? "border-green-500" : "border-red-500" } text-black`}
+                        className={`w-full py-2 px-4 mb-4 border text-black border-green-500 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent ${validPassword === '' ? 'text-gray-400' : ''} `}
                         id="password"
                         name="password"
                         type="password"
@@ -207,9 +198,12 @@ const AdminNewUserForm = () => {
                     <select
                         id="roles"
                         name="roles"
-                        className={`text-black w-[100%] py-2 px-4 mb-4 border ${
-                            validRolesClass ? "border-green-500" : "border-red-500"
-                        }`}
+                        className={
+                            `w-full py-2 px-4 mb-4 border text-black 
+                            border-green-500 rounded-md focus:outline-none 
+                            focus:ring-2 focus:ring-green-600 
+                            focus:border-transparent 
+                            ${validRolesClass ? 'text-gray-400' : ''} `}
                         multiple={true}
                         size="3"
                         value={roles}

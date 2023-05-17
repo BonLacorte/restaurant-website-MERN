@@ -20,7 +20,7 @@ router.route('/admin/products')
 router.route('/admin/products/new')
     .post(productsController.createNewProduct)
 
-router.route('/admin/product/:id')
+router.route('/admin/products/:id')
     .patch(productsController.updateProduct)
     .delete(productsController.deleteProduct)
     .get(productsController.getProductInfo)

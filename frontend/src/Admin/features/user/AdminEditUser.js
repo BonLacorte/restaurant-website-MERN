@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { selectUserById } from './adminUsersApiSlice'
-import EditUserForm from './AdminEditUserForm'
+import AdminEditUserForm from './AdminEditUserForm'
 
 const AdminEditUser = () => {
 
@@ -9,7 +9,7 @@ const AdminEditUser = () => {
 
     const user = useSelector(state => selectUserById(state, id))
 
-    const content = user ? <EditUserForm user={user} /> : <p>Loading...</p>
+    const content = user ? <AdminEditUserForm user={user} /> : <p>Loading...</p>
 
     return content
 }

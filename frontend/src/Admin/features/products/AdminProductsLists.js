@@ -18,9 +18,9 @@ const AdminProductsLists = () => {
 
 let content
 if (isLoading) content = <p>Loading...</p>
-if (isError) {
-    content = <p className="errmsg">{error?.data?.message}</p>
-}
+// if (isError) {
+//     content = <p className="errmsg">{error?.data?.message}</p>
+// }
 
 if (isSuccess) {
     const { ids } = products
@@ -33,7 +33,7 @@ if (isSuccess) {
         <>
             <div className="flex justify-center">
                 <table className="w-3/4 bg-black text-white">
-                    <thead className>
+                    <thead>
                         <tr>
                             <th scope="col" className="px-6 py-3 bg-gray-800 text-left text-sm font-medium">Product Id</th>
                             <th scope="col" className="px-6 py-3 bg-gray-800 text-left text-sm font-medium">Name</th>

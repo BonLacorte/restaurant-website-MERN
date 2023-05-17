@@ -1,4 +1,5 @@
 export const CATEGORIES = {
+    None: 'None',
     Laptop: 'Laptop',
     Footwear: 'Footwear',
     Bottom: 'Bottom',

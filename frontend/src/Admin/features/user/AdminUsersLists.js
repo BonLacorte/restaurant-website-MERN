@@ -21,7 +21,7 @@ const AdminUsersList = () => {
     if (isLoading) content = <p>Loading...</p>
 
     if (isError) {
-        content = <p className="errmsg">{error?.data?.message}</p>
+        content = <p className>{error?.data?.message}</p>
     }
 
     if (isSuccess) {
@@ -36,7 +36,7 @@ const AdminUsersList = () => {
             <>
                 <div className="flex justify-center">
                     <table className="w-3/4 bg-black text-white">
-                        <thead className>
+                        <thead>
                             <tr>
                                 <th scope="col" className="px-6 py-3 bg-gray-800 text-left text-sm font-medium">Username</th>
                                 <th scope="col" className="px-6 py-3 bg-gray-800 text-left text-sm font-medium">Roles</th>

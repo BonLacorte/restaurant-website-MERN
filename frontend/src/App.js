@@ -15,7 +15,6 @@ import AdminDashLayout from './Admin/components/AdminDashLayout';
 import AdminDash from './Admin/features/auth/AdminDash';
 import AdminRegister from './Admin/features/auth/AdminRegister';
 import AdminLogin from './Admin/features/auth/AdminLogin';
-import AdminEditUser from './Admin/features/user/AdminEditUser';
 import AdminNewUserForm from './Admin/features/user/AdminNewUserForm';
 import AdminPrefetch from './Admin/features/auth/AdminPrefetch';
 import Prefetch from './features/auth/Prefetch';
@@ -24,9 +23,11 @@ import AdminEditOrder from './Admin/features/orders/AdminEditOrder';
 import AdminNewOrderForm from './Admin/features/orders/AdminNewOrderForm';
 import AdminUsersLists from './Admin/features/user/AdminUsersLists';
 import Users from './features/user/User';
-// import AdminEditProduct from './Admin/features/products/AdminEditProduct';
+import AdminEditProduct from './Admin/features/products/AdminEditProduct';
 import AdminNewProductForm from './Admin/features/products/AdminNewProductForm';
 import AdminProductsLists from './Admin/features/products/AdminProductsLists';
+import AdminEditUser from './Admin/features/user/AdminEditUser';
+
 
 function App() {
   return (
@@ -80,7 +81,7 @@ function App() {
 
             <Route path="products"> 
               <Route index element={<AdminProductsLists />} />
-              {/* <Route path=":id" element={<AdminEditProduct />}/> */}
+              <Route path=":id" element={<AdminEditProduct />}/>
               <Route path="new" element={<AdminNewProductForm />}/>
             </Route>
 
