@@ -2,6 +2,7 @@ const User = require('../models/User')
 const Order = require('../models/Order')
 const asyncHandler = require('express-async-handler')
 const bcrypt = require('bcrypt')
+const cloudinary = require("../utils/cloudinary");
 
 // @desc Get all users in admin
 // @route GET /admin/users
@@ -58,7 +59,8 @@ const getUserOrders = asyncHandler(async (req, res) => {
 // @access Private
 const createNewUser = asyncHandler(async (req, res) => {
     const { firstname, lastname, email, password, roles, mobileNumber } = req.body
-
+    let avatar = req.body.avatar;
+    
     // Confirm data
     if (!firstname || !password || !mobileNumber || !Array.isArray(roles) || !roles.length) {
         return res.status(400).json({ message: 'All fields are required' })
@@ -71,18 +73,36 @@ const createNewUser = asyncHandler(async (req, res) => {
         return res.status(409).json({ message: 'Duplicate email' })
     }
 
-    // Hash password 
-    const hashedPwd = await bcrypt.hash(password, 10) // salt rounds
+    try {
 
-    const userObject = { firstname, lastname, email, "password": hashedPwd, roles, mobileNumber }
+        const result = await cloudinary.uploader.upload(avatar, {
+            folder: "users",
+        });
+        
+        avatar ={
+            public_id: result.public_id,
+            url: result.secure_url,
+        };
+        console.log(avatar.public_id)
+        console.log(avatar.secure_url)
+        
+        // Hash password 
+        const hashedPwd = await bcrypt.hash(password, 10) // salt rounds
 
-    // Create and store new user 
-    const user = await User.create(userObject)
+        const userObject = { firstname, lastname, email, "password": hashedPwd, roles, mobileNumber, avatar }
 
-    if (user) { //created 
-        res.status(201).json({ message: `New user ${email} created` })
-    } else {
-        res.status(400).json({ message: 'Invalid user data received' })
+        // Create and store new user 
+        const user = await User.create(userObject)
+
+        res.status(201).json({ 
+            success: true, 
+            user
+        })
+        
+    } catch (error) {
+        console.log(error);
+        next(error);
+
     }
 })
 

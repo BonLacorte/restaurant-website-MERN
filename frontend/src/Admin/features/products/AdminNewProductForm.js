@@ -115,9 +115,7 @@ const AdminNewProductForm = () => {
         e.preventDefault();
         if (canSave) {
             console.log("canSave:", canSave);
-        // Perform save logic here
-        // You can use the form values (name, description, price, category, available) to save the new product
-        // navigate("/admin/dash/products");
+
             await addNewProduct({ name, description, price, category, image  }) //image
         }
     };

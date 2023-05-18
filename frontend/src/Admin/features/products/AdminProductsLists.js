@@ -1,6 +1,7 @@
 import { useGetProductsQuery } from "./adminProductsApiSlice"
 import AdminProducts from './AdminProducts'
 import { Link } from "react-router-dom"
+import PulseLoader from 'react-spinners/PulseLoader'
 
 const AdminProductsLists = () => {
 
@@ -17,10 +18,22 @@ const AdminProductsLists = () => {
 })
 
 let content
-if (isLoading) content = <p>Loading...</p>
-// if (isError) {
-//     content = <p className="errmsg">{error?.data?.message}</p>
-// }
+if (isLoading) content = (
+    <div className="flex justify-center">
+        <PulseLoader  color={"#FFF"} />
+    </div>
+)
+if (isError) {
+    content = (
+        <>
+            <p className="flex justify-center">{error?.data?.message}</p>
+            <div className="my-10">
+                <p><Link to="/admin/dash/products/new">Add a new Product</Link></p>
+            </div>
+        </>
+        
+    )
+}
 
 if (isSuccess) {
     const { ids } = products

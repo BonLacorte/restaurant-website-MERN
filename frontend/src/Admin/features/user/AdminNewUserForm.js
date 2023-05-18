@@ -34,6 +34,8 @@ const AdminNewUserForm = () => {
     const [mobileNumber, setMobileNumber] = useState('')
     const [validMobileNumber, setValidMobileNumber] = useState(false)
     const [roles, setRoles] = useState(["Employee"])
+    const [avatar, setAvatar] = useState(null);
+    const [avatarPreview, setAvatarPreview] = useState(null);
 
     useEffect(() => {
       setValidFirstname(NAME_REGEX.test(firstname))
@@ -82,12 +84,36 @@ const AdminNewUserForm = () => {
         setRoles(values)
     }
 
-    const canSave = [roles.length, validFirstname, validLastname, validEmail, validPassword, validMobileNumber].every(Boolean) && !isLoading
+    //handle and convert it in base 64
+    const handleImage = (e) =>{
+
+        const file = e.target.files[0];
+
+        // Empty the image state (reset)
+        setAvatar('');
+        setAvatarPreview('');
+
+        const reader = new FileReader();
+
+        reader.onload = () => {
+            if (reader.readyState === 2) {
+            setAvatarPreview(reader.result);
+            setAvatar(reader.result);
+            }
+        };
+
+        if (file) {
+            reader.readAsDataURL(file);
+        }
+    }
+
+    const canSave = [roles.length, validFirstname, validLastname, validEmail, validPassword, validMobileNumber, avatar].every(Boolean) && !isLoading
 
     const onSaveUserClicked = async (e) => {
         e.preventDefault()
         if (canSave) {
-            await addNewUser({ firstname, lastname, password, email, roles, mobileNumber })
+            console.log("canSave:", canSave);
+            await addNewUser({ firstname, lastname, password, email, roles, mobileNumber, avatar })
         }
     }
 
@@ -211,6 +237,24 @@ const AdminNewUserForm = () => {
                     >
                         {options}
                     </select>
+
+
+                    <label className="block mb-2" htmlFor="image">
+                        Avatar:
+                    </label>
+                    <input
+                        id="image"
+                        name="image"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImage}
+                    />
+
+                    <div className="grid grid-cols-3 gap-4 py-2">
+                        {avatarPreview && (
+                            <img className="w-full h-auto object-contain" src={avatarPreview} alt="Product Preview"/>
+                        )}
+                    </div>
 
                 </form>
             </div>

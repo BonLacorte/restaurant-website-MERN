@@ -38,6 +38,9 @@ const AdminEditUserForm = ({ user }) => {
     const [mobileNumber, setMobileNumber] = useState(user.mobileNumber)
     const [validMobileNumber, setValidMobileNumber] = useState(false)
     const [roles, setRoles] = useState(user.roles)
+    const [avatar, setAvatar] = useState('');
+    const [oldAvatar, setOldAvatar] = useState(user.avatar);
+    const [avatarPreview, setAvatarPreview] = useState('');
 
     useEffect(() => {
     setValidFirstname(NAME_REGEX.test(firstname))
@@ -87,7 +90,29 @@ const AdminEditUserForm = ({ user }) => {
         setRoles(values)
     }
 
-    // const onActiveChanged = () => setActive(prev => !prev)
+    //handle and convert it in base 64
+    const handleImage = (e) => {
+        const file = e.target.files[0];
+        
+        setAvatar('');
+        setAvatarPreview('');
+        setOldAvatar('');
+
+        const reader = new FileReader();
+        
+        reader.onload = () => {
+            if (reader.readyState === 2) {
+            setAvatarPreview([reader.result]);
+            setAvatar([reader.result]);
+            }
+        };
+        
+        if (file) {
+            reader.readAsDataURL(file);
+            console.log(file);
+        }
+    };
+
 
     const onSaveUserClicked = async (e) => {
         if (password) {
@@ -250,6 +275,31 @@ const AdminEditUserForm = ({ user }) => {
                             >
                                 {options}
                             </select>
+                        </div>
+
+                        <label className="block mb-2" htmlFor="image">
+                            Avatar:
+                        </label>
+                        <input
+                            id="image"
+                            name="image"
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImage}
+                        />
+
+
+                        <div className="grid grid-cols-3 gap-4 py-2">
+                            {oldAvatar && (
+                                <img className="w-full h-auto object-contain" src={user.avatar} alt="User Old Avatar Preview"/>
+                            )}
+                        </div>
+
+
+                        <div className="grid grid-cols-3 gap-4 py-2">
+                            {avatarPreview && (
+                                <img className="w-full h-auto object-contain" src={avatarPreview} alt="User New Avatar Preview"/>
+                            )}
                         </div>
                         
                     {/* </div> */}

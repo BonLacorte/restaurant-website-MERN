@@ -15,6 +15,7 @@ const AdminProducts = ({ productId }) => {
     const handleEdit = () => navigate(`/admin/dash/products/${productId}`)
 
     const created = new Date(product.createdAt).toLocaleString('en-US', { day: 'numeric', month: 'long' })
+    const available = product.available ? 'Yes' : 'No'
 
     return (
         <tr >
@@ -23,7 +24,7 @@ const AdminProducts = ({ productId }) => {
             <td className="px-6 py-3 bg-gray-700 text-left text-sm font-medium">{product.category}</td>
             <td className="px-6 py-3 bg-gray-700 text-left text-sm font-medium">{product.price}</td>
             <td className="px-6 py-3 bg-gray-700 text-left text-sm font-medium">{created}</td>
-            <td className="px-6 py-3 bg-gray-700 text-left text-sm font-medium">{product.available}</td>
+            <td className="px-6 py-3 bg-gray-700 text-left text-sm font-medium">{available}</td>
 
             <td className="px-6 py-3 bg-gray-700 text-left text-sm font-medium">
                 <button

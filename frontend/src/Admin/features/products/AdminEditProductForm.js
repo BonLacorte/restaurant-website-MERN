@@ -33,7 +33,9 @@ const AdminEditProductForm = ({ product }) => {
     const [price, setPrice] = useState(product.price);
     const [validPrice, setValidPrice] = useState(false)
     const [category, setCategory] = useState(product.category);
+    const [available, setAvailable] = useState(product.available);
     const [image, setImage] = useState([]);
+    const [oldImage, setOldImage] = useState(product.image);
     const [imagesPreview, setImagesPreview] = useState([]);
 
     useEffect(() => {
@@ -56,6 +58,7 @@ const AdminEditProductForm = ({ product }) => {
             setPrice('')
             setCategory('')
             setImage([])
+            setOldImage([])
             setImagesPreview([])
             navigate('/admin/dash/products')
         }
@@ -65,7 +68,11 @@ const AdminEditProductForm = ({ product }) => {
     const onDescriptionChanged = (e) => setDescription(e.target.value);
     const onPriceChanged = (e) => setPrice(e.target.value);
     const onCategoryChanged = (e) => setCategory(e.target.value);
-    // const onAvailableChanged = () => setActive(prev => !prev)
+    const onAvailableChange = (e) => {
+        const value = e.target.value === "yes"; // Convert the string value to a boolean
+        setAvailable(value);
+      };
+      
 
     //handle and convert it in base 64
     const handleImage = (e) =>{
@@ -76,7 +83,7 @@ const AdminEditProductForm = ({ product }) => {
         // Empty the image array (reset)
         setImage([]);
         setImagesPreview([]);
-
+        setOldImage([]);
         // const file = e.target.files[0];
 
         files.forEach((file) => {
@@ -102,7 +109,14 @@ const AdminEditProductForm = ({ product }) => {
 
     const onSaveProductClicked = async (e) => {
         if (canSave) {
-            await updateProduct({ id: product.id, name, description, price, category, image })
+            // Check if new image(s) were selected
+            if (image.length === 0) {
+                // No new image selected, update the product with the old image(s)
+                await updateProduct({ id: product.id, name, description, price, category, image: oldImage, available });
+            } else {
+                // New image(s) selected, update the product with the new image(s)
+                await updateProduct({ id: product.id, name, description, price, category, image, available });
+            }
         }
     }
 
@@ -193,7 +207,6 @@ const AdminEditProductForm = ({ product }) => {
             />
             
             
-            
             <label className="block mb-2" htmlFor="category">
                 Category:</label>
             <select
@@ -207,8 +220,38 @@ const AdminEditProductForm = ({ product }) => {
                 {options}
             </select>
 
+
+            <label className="block mb-2" htmlFor="available">
+            Available:
+            </label>
+            <div className="flex items-center mb-4">
+            <input
+                id="available-yes"
+                name="available"
+                type="radio"
+                value="yes"
+                checked={available === true}
+                onChange={onAvailableChange}
+                className="mr-1"
+            />
+            <label htmlFor="available-yes" className="mr-4">
+                Yes
+            </label>
+            <input
+                id="available-no"
+                name="available"
+                type="radio"
+                value="no"
+                checked={available === false}
+                onChange={onAvailableChange}
+                className="mr-1"
+            />
+            <label htmlFor="available-no">No</label>
+            </div>
+
+
             <label className="block mb-2" htmlFor="image">
-            image:
+                Image:
             </label>
             <input
                 id="image"
@@ -218,6 +261,15 @@ const AdminEditProductForm = ({ product }) => {
                 onChange={handleImage}
                 multiple
             />
+
+
+            <div className="grid grid-cols-3 gap-4 py-2">
+                {oldImage &&
+                    oldImage.map((image, index) => (
+                    <img className="w-full h-auto object-contain"key={index} src={image.url} alt="Old Product Preview" />
+                ))}
+            </div>
+
 
             <div className="grid grid-cols-3 gap-4 py-2">
                 {imagesPreview.map((image, index) => (
