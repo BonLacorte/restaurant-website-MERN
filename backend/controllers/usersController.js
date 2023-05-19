@@ -57,10 +57,10 @@ const getUserOrders = asyncHandler(async (req, res) => {
 // @desc Create new user
 // @route POST /users
 // @access Private
-const createNewUser = asyncHandler(async (req, res) => {
+const createNewUser = asyncHandler(async (req, res, next) => {
+
     const { firstname, lastname, email, password, roles, mobileNumber } = req.body
-    let avatar = req.body.avatar;
-    
+
     // Confirm data
     if (!firstname || !password || !mobileNumber || !Array.isArray(roles) || !roles.length) {
         return res.status(400).json({ message: 'All fields are required' })
@@ -75,24 +75,45 @@ const createNewUser = asyncHandler(async (req, res) => {
 
     try {
 
-        const result = await cloudinary.uploader.upload(avatar, {
-            folder: "users",
-        });
-        
-        avatar ={
-            public_id: result.public_id,
-            url: result.secure_url,
-        };
-        console.log(avatar.public_id)
-        console.log(avatar.secure_url)
-        
+        let avatar = [];
+
+        if (typeof req.body.avatar === "string") {
+            avatar.push(req.body.avatar);
+        } else {
+            avatar = req.body.avatar;
+        }
+
+        const avatarLinks = [];
+
+        console.log(avatar.length)
+
+        if (avatar !== []) {
+            for (let i = 0; i < avatar.length; i++) {
+                const result = await cloudinary.uploader.upload(avatar[i], {
+                    folder: "users",
+                });
+            
+                avatarLinks.push({
+                    public_id: result.public_id,
+                    url: result.secure_url,
+                });
+            }
+
+        } else {
+            avatarLinks.push({
+                public_id: '',
+                url: '',
+            });
+        }
+
+        req.body.avatar = avatarLinks;
+
         // Hash password 
         const hashedPwd = await bcrypt.hash(password, 10) // salt rounds
-
-        const userObject = { firstname, lastname, email, "password": hashedPwd, roles, mobileNumber, avatar }
+        req.body.password = hashedPwd;
 
         // Create and store new user 
-        const user = await User.create(userObject)
+        const user = await User.create(req.body)
 
         res.status(201).json({ 
             success: true, 
@@ -102,16 +123,15 @@ const createNewUser = asyncHandler(async (req, res) => {
     } catch (error) {
         console.log(error);
         next(error);
-
     }
 })
 
 // @desc Update a user
 // @route PATCH /users
 // @access Private
-const updateUser = asyncHandler(async (req, res) => {
+const updateUser = asyncHandler(async (req, res, next) => {
     const { id, firstname, lastname, email, roles, mobileNumber, password } = req.body
-
+    
     // Available fields: firstname, lastname, password, mobilenumber, (id, roles is already included)
     // Confirm data 
     if (!id || !firstname || !Array.isArray(roles) || !roles.length ||  !mobileNumber) {  // 
@@ -119,7 +139,7 @@ const updateUser = asyncHandler(async (req, res) => {
     }
 
     // Does the user exist to update?
-    const user = await User.findById(id).exec()
+    let user = await User.findById(id)
 
     if (!user) {
         return res.status(400).json({ message: 'User not found' })
@@ -133,20 +153,82 @@ const updateUser = asyncHandler(async (req, res) => {
         return res.status(409).json({ message: 'Duplicate email' })
     }
 
-    user.firstname = firstname
-    user.lastname = lastname
-    user.email = email
-    user.roles = roles
-    user.mobileNumber = mobileNumber
+    
+    try {
+        let avatar = [];
 
-    if (password) {
-        // Hash password 
-        user.password = await bcrypt.hash(password, 10) // salt rounds 
+        // console.log('user.body.avatar: ', user.avatar);
+
+        // console.log('req.body.avatar: ', req.body.avatar);
+        // console.log('typeof req.body.avatar: ', typeof req.body.avatar);
+
+        if (typeof req.body.avatar === "string") {
+            avatar.push(req.body.avatar);
+        } else {
+            avatar = req.body.avatar;
+        }
+
+        console.log(avatar);
+        console.log(typeof avatar);
+
+        // Delete the old avatar from cloudinary
+        if (avatar !== undefined) {
+            if (user.avatar !== undefined){
+                console.log('i am on delete');
+                for (let i = 0; i < user.avatar.length; i++) {
+                    await cloudinary.uploader.destroy(user.avatar[i].public_id);
+                }
+            }
+
+            let avatarLinks = []
+
+            console.log('Does avatar have public_id:', avatar.some(avatarr => avatarr.hasOwnProperty('public_id')));
+
+            // Upload the new avatar to cloudinary
+
+            // If avatar does not have public_id, then it is new avatar. upload it to cloudinary
+            if (avatar.some(avatarr => avatarr.hasOwnProperty('public_id') === false)) {
+                
+                console.log('i am on update');
+
+                for (let i = 0; i < avatar.length; i++) {
+                    const result = await cloudinary.uploader.upload(avatar[i], {
+                        folder: "users",
+                    });
+                
+                    avatarLinks.push({
+                        public_id: result.public_id,
+                        url: result.secure_url,
+                    });
+
+                }
+            }
+            // If avatar has public_id, then it is old avatar. just use the old avatar 
+            else {
+                console.log('avatarLinks before',avatarLinks);
+                avatarLinks = avatar;
+                console.log('avatarLinks after',avatarLinks);
+            }
+
+            req.body.avatar = avatarLinks;
+
+            if (password) {
+                // Hash password 
+                req.body.password = await bcrypt.hash(password, 10) // salt rounds 
+            }
+        }
+        user = await User.findByIdAndUpdate(id, req.body, {
+            new: true,
+            runValidators: true,
+            useFindAndModify: false,
+        });
+
+        return res.status(200).json({ success: true })
+
+    } catch (error) {
+        console.log(error);
+        next(error);
     }
-
-    const updatedUser = await user.save()
-
-    res.json({ message: `${updatedUser.email} updated` })
 })
 
 
@@ -159,21 +241,34 @@ const updateUser = asyncHandler(async (req, res) => {
 // @route DELETE /users
 // @access Private
 const deleteUser = asyncHandler(async (req, res) => {
-    const { id } = req.body
+    
+    try {
+        const { id } = req.body
 
-    // Does the user exist to delete?
-    const user = await User.findById(id).exec()
+        // Does the user exist to delete?
+        let user = await User.findById(id)
 
-    // Confirm if user exists
-    if(!user) {
-        return res.status(400).json({ message: 'User was not found' })
+        // Confirm if user exists
+        if(!user) {
+            return res.status(400).json({ message: 'User was not found' })
+        }
+
+        // Delete the avatar from cloudinary
+        if (user.avatar !== undefined){
+            for (let i = 0; i < user.avatar.length; i++) {
+                await cloudinary.uploader.destroy(user.avatar[i].public_id);
+            }
+        }
+
+        // Delete the user from the database
+        user = await user.deleteOne()
+
+        return res.status(200).json({ success: true });
+
+    } catch (error) {
+        console.log(error);
+        next(error);
     }
-
-    const result = await user.deleteOne()
-
-    const reply = `Email ${result.email} with ID ${result._id} deleted`
-
-    res.json(reply)
 })
 
 

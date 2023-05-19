@@ -4,7 +4,7 @@ const AdminDashHeader = () => {
 
     const content = (
         <header className="mx-auto w-full  ">
-            <div className="text-white ">
+            <div>
                 {/* add nav buttons later */}
                 <div className='w-full container mx-auto flex items-center justify-between mt-0 py-2 '>
                     <div className='pl-4 flex items-center '>

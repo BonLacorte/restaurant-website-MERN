@@ -88,9 +88,8 @@ const createNewProduct = asyncHandler(async (req, res, next) => {
     }
 
     try {
+
         let images = [];
-        // console.log(req.body.image)
-        console.log(req.body)
 
         if (typeof req.body.image === "string") {
             images.push(req.body.image);
@@ -100,26 +99,28 @@ const createNewProduct = asyncHandler(async (req, res, next) => {
 
         const imagesLinks = [];
 
-        console.log(images.length)
-
-        for (let i = 0; i < images.length; i++) {
-            const result = await cloudinary.uploader.upload(images[i], {
-                folder: "products",
-            });
+        if (images !== []) {
+            for (let i = 0; i < images.length; i++) {
+                const result = await cloudinary.uploader.upload(images[i], {
+                    folder: "products",
+                });
+            
+                imagesLinks.push({
+                    public_id: result.public_id,
+                    url: result.secure_url,
+                });
+            }
         
+        } else {
             imagesLinks.push({
-                public_id: result.public_id,
-                url: result.secure_url,
+                public_id: '',
+                url: '',
             });
-            console.log(result.public_id)
-            console.log(result.secure_url)
         }
 
         req.body.image = imagesLinks;
-        // req.body.user = req.user.id;
-        console.log('imageLinks: ',imagesLinks)
-        console.log('req.body.image: ',req.body.image)
 
+        // Create and store new product 
         const product = await Product.create(req.body);
 
         res.status(201).json({
@@ -130,7 +131,6 @@ const createNewProduct = asyncHandler(async (req, res, next) => {
     } catch (error) {
         console.log(error);
         next(error);
-
     }
 })
 
@@ -141,15 +141,13 @@ const createNewProduct = asyncHandler(async (req, res, next) => {
 const updateProduct = asyncHandler(async (req, res, next) => {
     
     const { id } = req.body
-    // console.log('id before: ',id)
     let product = await Product.findById(id);
 
     // Confirm if product exists
-
     if(!product) {
         return res.status(400).json({ message: 'Product not found' })
     }
-    console.log('req.body.image before : ',req.body.image)
+
     try {
         let images = [];
 
@@ -159,52 +157,51 @@ const updateProduct = asyncHandler(async (req, res, next) => {
             images = req.body.image;
         }
 
-        // Delete images from cloudinary
-        if (product.image.public_id !== '' && typeof images === "string"){
-            for (let i = 0; i < product.image.length; i++) {
-                await cloudinary.uploader.destroy(product.image[i].public_id);
+        // // Delete the old images from cloudinary
+        if (images !== undefined){
+            if (product.image !== undefined){
+                for (let i = 0; i < product.image.length; i++) {
+                    await cloudinary.uploader.destroy(product.image[i].public_id);
+                }
             }
-        }
 
-        let imagesLinks = [];
+            let imagesLinks = [];
 
+            console.log('Does images have public_id:', images.some(image => image.hasOwnProperty('public_id')));
 
-        // Upload images to cloudinary
-        if (typeof images === "string") {
-            for (let i = 0; i < images.length; i++) {
-                const result = await cloudinary.uploader.upload(images[i], {
-                    folder: "products",
-                });
-            
-                imagesLinks.push({
-                    public_id: result.public_id,
-                    url: result.secure_url,
-                });
-                console.log(result.public_id)
-                console.log(result.secure_url)
+            // Upload images to cloudinary
+            if (images.some(image => image.hasOwnProperty('public_id') === false)) {
+                for (let i = 0; i < images.length; i++) {
+                    const result = await cloudinary.uploader.upload(images[i], {
+                        folder: "products",
+                    });
+                
+                    imagesLinks.push({
+                        public_id: result.public_id,
+                        url: result.secure_url,
+                    });
+
+                }
+            } else {
+                console.log('imagesLinks before',imagesLinks);
+                imagesLinks = images;
+                console.log('imagesLinks before',imagesLinks);
             }
-        } else {
-            imagesLinks = images;
+
+            req.body.image = imagesLinks;
         }
-        
-
-        req.body.image = imagesLinks;
-        // req.body.user = req.user.id;
-        // console.log('imageLinks: ',imagesLinks)
-        // console.log('req.body.image: ',req.body.image)
-
         product = await Product.findByIdAndUpdate(id, req.body, {
             new: true,
             runValidators: true,
             useFindAndModify: false,
         });
 
-        return res.status(200).json({ success: true})
+        return res.status(200).json({ success: true })
+
     } catch (error) {
         console.log(error);
         next(error);
     }
-    
 })
 
 
@@ -216,26 +213,25 @@ const deleteProduct = asyncHandler(async (req, res, next) => {
     try {
         const { id } = req.body
 
-        const product = await Product.findById(id).exec()
+        // Does the product exist to delete?
+        let product = await Product.findById(id)
         
         // Confirm if product exists
         if(!product) {
             return res.status(400).json({ message: 'Product not found' })
         }
-        console.log('product.image.public_id BEFORE delete cloudinary:',product.image.public_id)
-        if (product.image.public_id !== ''){
+        
+        // Delete the images from cloudinary
+        if (product.image !== undefined){
             for (let i = 0; i < product.image.length; i++) {
                 await cloudinary.uploader.destroy(product.image[i].public_id);
             }
         }
-        console.log('product.image.public_id AFTER delete cloudinary:',product.image.public_id)
-        console.log('req.body.image AFTER delete cloudinary: ',req.body.image)
-        const result = await product.deleteOne()
+        
+        // Delete the product from the database
+        product = await product.deleteOne()
 
-        return res.status(200).json({ 
-            success: true, 
-            message: `Product ${result.name} with ID ${result._id} Delete Successfully` 
-        })
+        return res.status(200).json({ success: true })
     
     } catch (error) {
         console.log(error);

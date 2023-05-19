@@ -34,8 +34,8 @@ const AdminNewUserForm = () => {
     const [mobileNumber, setMobileNumber] = useState('')
     const [validMobileNumber, setValidMobileNumber] = useState(false)
     const [roles, setRoles] = useState(["Employee"])
-    const [avatar, setAvatar] = useState(null);
-    const [avatarPreview, setAvatarPreview] = useState(null);
+    const [avatar, setAvatar] = useState([]);
+    const [avatarPreview, setAvatarPreview] = useState([]);
 
     useEffect(() => {
       setValidFirstname(NAME_REGEX.test(firstname))
@@ -66,6 +66,8 @@ const AdminNewUserForm = () => {
             setEmail('')
             setPassword('')
             setMobileNumber('')
+            setAvatar([])
+            setAvatarPreview([])
             navigate('/admin/dash/users')
         }
     }, [isSuccess, navigate])
@@ -90,8 +92,8 @@ const AdminNewUserForm = () => {
         const file = e.target.files[0];
 
         // Empty the image state (reset)
-        setAvatar('');
-        setAvatarPreview('');
+        setAvatar([]);
+        setAvatarPreview([]);
 
         const reader = new FileReader();
 
@@ -251,9 +253,9 @@ const AdminNewUserForm = () => {
                     />
 
                     <div className="grid grid-cols-3 gap-4 py-2">
-                        {avatarPreview && (
-                            <img className="w-full h-auto object-contain" src={avatarPreview} alt="Product Preview"/>
-                        )}
+                        {avatarPreview.map((avatar, index) => (
+                            <img className="w-full h-auto object-contain" key={index} src={avatar} alt="User Preview" />
+                        ))}
                     </div>
 
                 </form>

@@ -38,9 +38,9 @@ const AdminEditUserForm = ({ user }) => {
     const [mobileNumber, setMobileNumber] = useState(user.mobileNumber)
     const [validMobileNumber, setValidMobileNumber] = useState(false)
     const [roles, setRoles] = useState(user.roles)
-    const [avatar, setAvatar] = useState('');
+    const [avatar, setAvatar] = useState([]);
     const [oldAvatar, setOldAvatar] = useState(user.avatar);
-    const [avatarPreview, setAvatarPreview] = useState('');
+    const [avatarPreview, setAvatarPreview] = useState([]);
 
     useEffect(() => {
     setValidFirstname(NAME_REGEX.test(firstname))
@@ -81,7 +81,6 @@ const AdminEditUserForm = ({ user }) => {
     const onPasswordChanged = e => setPassword(e.target.value)
     const onEmailChanged = e => setEmail(e.target.value)
     const onMobileNumberChanged = e => setMobileNumber(e.target.value)
-
     const onRolesChanged = e => {
         const values = Array.from(
             e.target.selectedOptions,
@@ -92,33 +91,43 @@ const AdminEditUserForm = ({ user }) => {
 
     //handle and convert it in base 64
     const handleImage = (e) => {
-        const file = e.target.files[0];
+        const files = Array.from(e.target.files);
         
-        setAvatar('');
-        setAvatarPreview('');
-        setOldAvatar('');
+        console.log("files:", files);
 
-        const reader = new FileReader();
+        setAvatar([]);
+        setAvatarPreview([]);
+        setOldAvatar([]);
+
+        files.forEach((file) => {
+            const reader = new FileReader();
         
-        reader.onload = () => {
-            if (reader.readyState === 2) {
-            setAvatarPreview([reader.result]);
-            setAvatar([reader.result]);
-            }
-        };
+            reader.onload = () => {
+                if (reader.readyState === 2) {
+                setAvatarPreview([reader.result]);
+                setAvatar([reader.result]);
+                }
+            };
         
-        if (file) {
+
             reader.readAsDataURL(file);
             console.log(file);
-        }
+            console.log("avatar length:", avatar.length);
+        });
     };
 
 
     const onSaveUserClicked = async (e) => {
-        if (password) {
-            await updateUser({ id: user.id, firstname, lastname, password, email, mobileNumber, roles })
-        } else {
-            await updateUser({ id: user.id, firstname, lastname, email, mobileNumber, roles })
+        console.log("oldAvatar:", oldAvatar);
+        console.log("avatar:", avatar);
+        if (password && avatar === '') {
+            await updateUser({ id: user.id, firstname, lastname, password, email, mobileNumber, roles, avatar: oldAvatar })
+        } else if (password && avatar !== '') {
+            await updateUser({ id: user.id, firstname, lastname, password, email, mobileNumber, roles, avatar })
+        } else if (!password && avatar === '') {
+            await updateUser({ id: user.id, firstname, lastname, email, mobileNumber, roles, avatar: oldAvatar })
+        } else if (!password && avatar !== '') {
+            await updateUser({ id: user.id, firstname, lastname, email, mobileNumber, roles, avatar })
         }
     }
 
@@ -139,9 +148,10 @@ const AdminEditUserForm = ({ user }) => {
     let canSave
     if (password) {
         canSave = [roles.length, validFirstname, validLastname, validEmail, validPassword, validMobileNumber].every(Boolean) && !isLoading
-    } else {
+    } else if (!password) {
         canSave = [roles.length, validFirstname, validLastname, validEmail, validMobileNumber].every(Boolean) && !isLoading
     }
+        
 
     const errClass = (isError || isDelError) ? "errmsg" : "offscreen"
     const validRolesClass = !Boolean(roles.length) ? 'form__input--incomplete' : ''
@@ -290,16 +300,18 @@ const AdminEditUserForm = ({ user }) => {
 
 
                         <div className="grid grid-cols-3 gap-4 py-2">
-                            {oldAvatar && (
-                                <img className="w-full h-auto object-contain" src={user.avatar} alt="User Old Avatar Preview"/>
-                            )}
+                            {oldAvatar && 
+                                oldAvatar.map((avatar, index) => (
+                                    <img className="w-full h-auto object-contain"key={index} src={avatar.url} alt="Old User Preview" />
+                                ))
+                            }
                         </div>
 
 
                         <div className="grid grid-cols-3 gap-4 py-2">
-                            {avatarPreview && (
-                                <img className="w-full h-auto object-contain" src={avatarPreview} alt="User New Avatar Preview"/>
-                            )}
+                            {avatarPreview.map((avatar, index) => (
+                                <img className="w-full h-auto object-contain" key={index} src={avatar} alt="User Preview" />
+                            ))}
                         </div>
                         
                     {/* </div> */}

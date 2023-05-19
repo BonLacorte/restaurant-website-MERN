@@ -10,8 +10,10 @@
 
 :root {
   /* COLORS */
-  --BGCOLOR: #0F172A;
+  /* --BGCOLOR: #0F172A; */
+  --BGCOLOR: #FFF;
   --COLOR: #FFF;
+  --COLOR: #000;
   --BORDER-COLOR: #FFF;
   --ERROR: firebrick;
   --INACTIVE: lightgray;
@@ -34,7 +36,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   box-sizing: border-box;
   padding: 0;
-  background-color: black;
+  background-color: white;
   color: var(--COLOR);
   overflow-x: hidden;
   height: 100%;
