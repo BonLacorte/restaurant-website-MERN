@@ -1,29 +1,29 @@
 const express = require('express')
 const router = express.Router()
 const productsController = require('../controllers/productsController')
-// const verifyJWT = require('../middleware/verifyJWT')
+const {verifyJWT, verifyTokenAndAuthorization, verifyTokenAndAdmin} = require('../middleware/verifyJWT')
 
 // router.use(verifyJWT)
 
 // Customer
-router.route('/products')
-    .get(productsController.getAllProducts)
+router.route('/')
+    .get(productsController.getAllProducts)              // check
 
-router.route('/product/:id')
-    .get(productsController.getProductInfo)
+router.route('/:id')
+    .get(productsController.getProductInfo)              // check
 
 // Admin
 router.route('/admin/products')
-    .get(productsController.getAllProducts)
+    .get(productsController.getAllProducts)        // check
     
 
 router.route('/admin/products/new')
-    .post(productsController.createNewProduct)
+    .post(productsController.createNewProduct)     // check
 
 router.route('/admin/products/:id')
-    .patch(productsController.updateProduct)
-    .delete(productsController.deleteProduct)
-    .get(productsController.getProductInfo)
+    .patch(productsController.updateProduct)       // check
+    .delete(productsController.deleteProduct)      // check
+    .get(productsController.getProductInfo)        // check
     
 
 module.exports = router

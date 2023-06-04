@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom';
+import { Route, Router, Navigate, Switch, Routes, Redirect } from 'react-router-dom';
 import Layout from './components/Layout';
 import Public from './components/Public';
 import Login from './features/auth/Login';
@@ -10,97 +10,36 @@ import Gallery from './features/gallery/Gallery';
 import Contact from './features/contact/Contact';
 import Register from './features/auth/Register';
 import Cart from './features/cart/Cart';
-import Admin from './Admin/Admin';
-import AdminDashLayout from './Admin/components/AdminDashLayout';
-import AdminDash from './Admin/features/auth/AdminDash';
-import AdminRegister from './Admin/features/auth/AdminRegister';
-import AdminLogin from './Admin/features/auth/AdminLogin';
-import AdminNewUserForm from './Admin/features/user/AdminNewUserForm';
-import AdminPrefetch from './Admin/features/auth/AdminPrefetch';
-import Prefetch from './features/auth/Prefetch';
-import AdminOrdersLists from './Admin/features/orders/AdminOrdersLists';
-import AdminEditOrder from './Admin/features/orders/AdminEditOrder';
-import AdminNewOrderForm from './Admin/features/orders/AdminNewOrderForm';
-import AdminUsersLists from './Admin/features/user/AdminUsersLists';
-import Users from './features/user/User';
-import AdminEditProduct from './Admin/features/products/AdminEditProduct';
-import AdminNewProductForm from './Admin/features/products/AdminNewProductForm';
-import AdminProductsLists from './Admin/features/products/AdminProductsLists';
-import AdminEditUser from './Admin/features/user/AdminEditUser';
+import ProductPage from './features/menu/ProductPage';
+import Success from './features/auth/Success';
+import Pay from './features/payment/Pay';
+import { useSelector } from 'react-redux';
+import React from 'react';
+// import Users from './features/user/User';
 
 
 function App() {
+  const user = useSelector((state) => state.user.currentUser);
   return (
-    <Routes>
-      <Route path="/" element={<Layout/>}>
-        <Route index element={<Public />} />
-        {/* <Route index element={<LandingPage />} /> */}
-        <Route path="register" element={<Register />} />
-        <Route path="login" element={<Login />} />
-        <Route element={<Prefetch />}> 
-          <Route path="dash" element={<DashLayout />}>
-
-            <Route index element={<Welcome />} />
-
-            <Route path="menu">
-              <Route index element={<Menu />} />
-            </Route>
-
-            <Route path="about">
-              <Route index element={<About />} />
-            </Route>
-
-            <Route path="gallery">
-              <Route index element={<Gallery />} />
-            </Route>
-
-            <Route path="contact">
-              <Route index element={<Contact />} />
-            </Route>
-
-            <Route path="cart">
-              <Route index element={<Cart />} />
-            </Route>
-
-            <Route path="users">
-              <Route index element={<Users />} />
-            </Route>
-
-          </Route>{/* End Dash */}
-        </Route>{/* End Prefetch */}
-      </Route>
-      <Route path="admin" element={<Layout/>}>
-        <Route index element={<Admin />} />
-        <Route path="register" element={<AdminRegister />} />
-        <Route path="login" element={<AdminLogin />} />
-
-        <Route element={<AdminPrefetch />}> 
-          <Route path="dash" element={<AdminDashLayout/>}>
-          
-            <Route index element={<AdminDash />} />
-
-            <Route path="products"> 
-              <Route index element={<AdminProductsLists />} />
-              <Route path=":id" element={<AdminEditProduct />}/>
-              <Route path="new" element={<AdminNewProductForm />}/>
-            </Route>
-
-            <Route path="orders"> 
-              <Route index element={<AdminOrdersLists />} />
-              <Route path=":id" element={<AdminEditOrder />}/>
-              <Route path="new" element={<AdminNewOrderForm />}/>
-            </Route>
-
-            <Route path="users"> 
-              <Route index element={<AdminUsersLists />} />
-              <Route path=":id" element={<AdminEditUser />}/>
-              <Route path="new" element={<AdminNewUserForm />}/>
-            </Route>
+      <Routes>
+        <Route exact path="/" element={<DashLayout/>}>
+          <Route index element={<Welcome />}/>
+          <Route path="menu/:category" element={<Menu />}/>
+          <Route path="product/:id" element={<ProductPage />}/>
+          <Route path="about" element={<About />}/>
+          <Route path="gallery" element={<Gallery />}/>
+          <Route path="contact" element={<Contact />}/>
+          <Route path="cart" element={<Cart />}/>
+          <Route path="payment" element={<Pay />}/>
+          <Route path="success" element={<Success />}/>
+          <Route path="/login" element={<Login />}>
+            {user ? Navigate("/") : <Route path="/login" element={<Login />}/>}
+          </Route>
+          <Route path="/register" element={<Register />}>
+            {user ? Navigate("/") : <Route path="/register" element={<Register />} />}
           </Route>
         </Route>
-      </Route>
-    </Routes>
-  );
+      </Routes>
+  )
 }
-
 export default App;

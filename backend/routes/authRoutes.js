@@ -6,7 +6,10 @@ const loginLimiter = require('../middleware/loginLimiter')
 
 // router.use(verifyJWT)
 
-router.route('/')
+router.route('/register')
+    .post(authController.register)
+
+router.route('/login')
     .post(loginLimiter, authController.login)
 
 router.route('/refresh')

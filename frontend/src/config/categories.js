@@ -1,11 +1,7 @@
 export const CATEGORIES = {
-    None: 'None',
-    Laptop: 'Laptop',
-    Footwear: 'Footwear',
-    Bottom: 'Bottom',
-    Tops: 'Tops',
-    Attire: 'Attire',
-    Camera: 'Camera',
-    SmartPhones: 'SmartPhones',
-
+    Burger: 'Burger',
+    Pasta: 'Pasta',
+    Hungarian: 'Hungarian',
+    FriesAndNachos: 'Fries And Nachos',
+    RiceMeals: 'Rice Meals',
 }

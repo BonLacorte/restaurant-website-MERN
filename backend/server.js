@@ -18,9 +18,9 @@ connectDB()
 app.use(logger)
 
 app.use(cors(corsOptions))
+// app.use(cors())
 
-app.use(express.json({ limit: '25mb' }))
-app.use(express.urlencoded({ limit: '10mb' }));
+app.use(express.json())
 
 app.use(cookieParser())
 
@@ -31,6 +31,8 @@ app.use('/', require('./routes/authRoutes'))
 app.use('/', require('./routes/userRoutes'))
 app.use('/', require('./routes/orderRoutes'))
 app.use('/', require('./routes/productRoutes'))
+app.use('/', require('./routes/cartRoutes'))
+app.use('/', require('./routes/stripeRoutes'))
 
 app.all('*', (req, res) => {
     res.status(404)
@@ -44,6 +46,8 @@ app.all('*', (req, res) => {
 })
 
 app.use(errorHandler)
+
+mongoose.set('strictQuery', false);
 
 mongoose.connection.once('open', () => {
     console.log('Connected to MongoDB')

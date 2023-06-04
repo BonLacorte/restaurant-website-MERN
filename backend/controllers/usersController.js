@@ -9,71 +9,116 @@ const cloudinary = require("../utils/cloudinary");
 // @access Private
 const getAllUsers = asyncHandler(async (req, res) => {
     // Get all users from MongoDB
-    const users = await User.find().select('-password').lean()
+    const qNew = req.query.new;
+
+    let users
+
+    if (qNew) {
+        users = await User.find().sort({ _id: -1 }).limit(1).select('-password').lean()
+    } else {
+        users = await User.find().select('-password').lean()
+    }
 
     // If no users 
     if (!users?.length) {
         return res.status(400).json({ message: 'No users found' })
     }
 
-    res.json(users)
+    return res.status(201).json(users)
 })
 
 // @desc Get user info in admin
 // @route GET /users
 // @access Private
-const getUserInfo = asyncHandler(async (req, res) => {
+const getUserInfo = asyncHandler(async (req, res, next) => {
+    try {
+        const { id } = req.body
 
-    const { id } = req.body
+        const user = await User.findById(id).select('-password').lean().exec()
 
-    const user = await User.findById(id).exec()
-    
-    // Confirm if product exists
-    if(!user) {
-        return res.status(400).json({ message: 'User not found' })
+        // Confirm if user exists
+        if(!user) {
+            return res.status(400).json({ message: 'User not found' })
+        }
+
+        return res.status(201).json(user)
+    } 
+    catch(error) {
+        console.log(error);
+        next(error);
     }
-
-    return res.status(201).json({ success: true, product })
 })
 
 
 // @desc Get order history of customer in customer and admin
 // @route GET users/orders
 // @access Private
-const getUserOrders = asyncHandler(async (req, res) => {
-
-    const { id } = req.body
+const getUserOrders = asyncHandler(async (req, res, next) => {
+    try {
+        const { id } = req.body
     
-    // Show all orders of user
-    const orders = await Order.find({ user: id }).lean().exec()
+        // Show all orders of user
+        const orders = await Order.find({ user: id }).lean().exec()
 
-    res.status(200).json({
-        success: true,
-        orders,
-    });
-    });
+        res.status(200).json(orders);
+    } catch(error) {
+        console.log(error);
+        next(error);
+    }
+});
 
+
+// @desc Get stats
+// @route GET admin/users/stats
+// @access Private
+const getUserStats = asyncHandler(async (req, res, next) => {
+    const date = new Date();
+    const lastYear = new Date(date.setFullYear(date.getFullYear() - 1));
+
+    try {
+        console.log(lastYear);
+        console.log(date);
+        console.log(date.getFullYear());
+        console.log("hello");
+        const data = await User.aggregate([
+            { $match: { createdAt: { $gte: lastYear } } },
+            {
+                $project: {
+                    month: { $month: "$createdAt" },
+                },
+            },
+            {
+                $group: {
+                    _id: "$month",
+                    total: { $sum: 1 },
+                },
+            },
+        ]);
+        res.status(200).json({data})
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+});
 
 // @desc Create new user
 // @route POST /users
 // @access Private
 const createNewUser = asyncHandler(async (req, res, next) => {
-
-    const { firstname, lastname, email, password, roles, mobileNumber } = req.body
-
-    // Confirm data
-    if (!firstname || !password || !mobileNumber || !Array.isArray(roles) || !roles.length) {
-        return res.status(400).json({ message: 'All fields are required' })
-    }
-
-    // Check for duplicate email
-    const duplicate = await User.findOne({ email }).lean().exec()
-
-    if (duplicate) {
-        return res.status(409).json({ message: 'Duplicate email' })
-    }
-
     try {
+        const { firstname, lastname, email, password, roles, mobileNumber } = req.body
+
+        // Confirm data
+        if (!firstname || !password || !mobileNumber || !Array.isArray(roles) || !roles.length) {
+            return res.status(400).json({ message: 'All fields are required' })
+        }
+    
+        // Check for duplicate email
+        const duplicate = await User.findOne({ email }).lean().exec()
+    
+        if (duplicate) {
+            return res.status(409).json({ message: 'Duplicate email' })
+        }
 
         let avatar = [];
 
@@ -130,105 +175,121 @@ const createNewUser = asyncHandler(async (req, res, next) => {
 // @route PATCH /users
 // @access Private
 const updateUser = asyncHandler(async (req, res, next) => {
+    // try {
+
     const { id, firstname, lastname, email, roles, mobileNumber, password } = req.body
     
-    // Available fields: firstname, lastname, password, mobilenumber, (id, roles is already included)
-    // Confirm data 
-    if (!id || !firstname || !Array.isArray(roles) || !roles.length ||  !mobileNumber) {  // 
-        return res.status(400).json({ message: 'All fields except lastname and password are required' })
-    }
+    // // Available fields: firstname, lastname, password, mobilenumber, (id, roles is already included)
+    // // Confirm data 
+    // if (!id || !firstname || !Array.isArray(roles) || !roles.length ||  !mobileNumber) {  // 
+    //     return res.status(400).json({ message: 'All fields except lastname and password are required' })
+    // }
 
-    // Does the user exist to update?
-    let user = await User.findById(id)
+    // // Does the user exist to update?
+    // let user = await User.findById(id)
 
-    if (!user) {
-        return res.status(400).json({ message: 'User not found' })
-    }
+    // if (!user) {
+    //     return res.status(400).json({ message: 'User not found' })
+    // }
 
-    // Check for duplicate 
-    const duplicate = await User.findOne({ email }).lean().exec()
+    // // Check for duplicate 
+    // const duplicate = await User.findOne({ email }).lean().exec()
 
-    // Allow updates to the original user 
-    if (duplicate && duplicate?._id.toString() !== id) {
-        return res.status(409).json({ message: 'Duplicate email' })
-    }
+    // // Allow updates to the original user 
+    // if (duplicate && duplicate?._id.toString() !== id) {
+    //     return res.status(409).json({ message: 'Duplicate email' })
+    // }
 
-    
+
+    //      // update the user's avatar
+    //     let avatar = [];
+
+    //     if (typeof req.body.avatar === "string") {
+    //         avatar.push(req.body.avatar);
+    //     } else {
+    //         avatar = req.body.avatar;
+    //     }
+
+    //     console.log(avatar);
+    //     console.log(typeof avatar);
+
+    //     // Delete the old avatar from cloudinary
+    //     if (avatar !== undefined) {
+    //         if (user.avatar !== undefined){
+    //             console.log('i am on delete');
+    //             for (let i = 0; i < user.avatar.length; i++) {
+    //                 await cloudinary.uploader.destroy(user.avatar[i].public_id);
+    //             }
+    //         }
+
+    //         let avatarLinks = []
+
+    //         console.log('Does avatar have public_id:', avatar.some(avatarr => avatarr.hasOwnProperty('public_id')));
+
+    //         // Upload the new avatar to cloudinary
+
+    //         // If avatar does not have public_id, then it is new avatar. upload it to cloudinary
+    //         if (avatar.some(avatarr => avatarr.hasOwnProperty('public_id') === false)) {
+                
+    //             console.log('i am on update');
+
+    //             for (let i = 0; i < avatar.length; i++) {
+    //                 const result = await cloudinary.uploader.upload(avatar[i], {
+    //                     folder: "users",
+    //                 });
+                
+    //                 avatarLinks.push({
+    //                     public_id: result.public_id,
+    //                     url: result.secure_url,
+    //                 });
+
+    //             }
+    //         }
+    //         // If avatar has public_id, then it is old avatar. just use the old avatar 
+    //         else {
+    //             console.log('avatarLinks before',avatarLinks);
+    //             avatarLinks = avatar;
+    //             console.log('avatarLinks after',avatarLinks);
+    //         }
+
+    //         req.body.avatar = avatarLinks;
+
+    //         if (password) {
+    //             // Hash password 
+    //             req.body.password = await bcrypt.hash(password, 10) // salt rounds 
+    //         }
+    //     }
+    //     user = await User.findByIdAndUpdate(id, req.body, {
+    //         new: true,
+    //         runValidators: true,
+    //         useFindAndModify: false,
+    //     });
+
+    //     return res.status(200).json({ success: true })
+
+    // } catch (error) {
+    //     console.log(error);
+    //     next(error);
+    // }
+
+
     try {
-        let avatar = [];
-
-        // console.log('user.body.avatar: ', user.avatar);
-
-        // console.log('req.body.avatar: ', req.body.avatar);
-        // console.log('typeof req.body.avatar: ', typeof req.body.avatar);
-
-        if (typeof req.body.avatar === "string") {
-            avatar.push(req.body.avatar);
-        } else {
-            avatar = req.body.avatar;
+        if (password) {
+            // Hash password 
+            req.body.password = await bcrypt.hash(password, 10) // salt rounds 
         }
-
-        console.log(avatar);
-        console.log(typeof avatar);
-
-        // Delete the old avatar from cloudinary
-        if (avatar !== undefined) {
-            if (user.avatar !== undefined){
-                console.log('i am on delete');
-                for (let i = 0; i < user.avatar.length; i++) {
-                    await cloudinary.uploader.destroy(user.avatar[i].public_id);
-                }
-            }
-
-            let avatarLinks = []
-
-            console.log('Does avatar have public_id:', avatar.some(avatarr => avatarr.hasOwnProperty('public_id')));
-
-            // Upload the new avatar to cloudinary
-
-            // If avatar does not have public_id, then it is new avatar. upload it to cloudinary
-            if (avatar.some(avatarr => avatarr.hasOwnProperty('public_id') === false)) {
-                
-                console.log('i am on update');
-
-                for (let i = 0; i < avatar.length; i++) {
-                    const result = await cloudinary.uploader.upload(avatar[i], {
-                        folder: "users",
-                    });
-                
-                    avatarLinks.push({
-                        public_id: result.public_id,
-                        url: result.secure_url,
-                    });
-
-                }
-            }
-            // If avatar has public_id, then it is old avatar. just use the old avatar 
-            else {
-                console.log('avatarLinks before',avatarLinks);
-                avatarLinks = avatar;
-                console.log('avatarLinks after',avatarLinks);
-            }
-
-            req.body.avatar = avatarLinks;
-
-            if (password) {
-                // Hash password 
-                req.body.password = await bcrypt.hash(password, 10) // salt rounds 
-            }
-        }
-        user = await User.findByIdAndUpdate(id, req.body, {
+        const updatedUser = await User.findByIdAndUpdate(id, req.body, {
             new: true,
             runValidators: true,
             useFindAndModify: false,
         });
-
-        return res.status(200).json({ success: true })
-
+        res.status(200).json({ success: true, updatedUser })
     } catch (error) {
-        console.log(error);
+        res.status(400).json({ message: 'User was not updated' })
         next(error);
     }
+
+
 })
 
 
@@ -241,7 +302,6 @@ const updateUser = asyncHandler(async (req, res, next) => {
 // @route DELETE /users
 // @access Private
 const deleteUser = asyncHandler(async (req, res) => {
-    
     try {
         const { id } = req.body
 
@@ -253,12 +313,12 @@ const deleteUser = asyncHandler(async (req, res) => {
             return res.status(400).json({ message: 'User was not found' })
         }
 
-        // Delete the avatar from cloudinary
-        if (user.avatar !== undefined){
-            for (let i = 0; i < user.avatar.length; i++) {
-                await cloudinary.uploader.destroy(user.avatar[i].public_id);
-            }
-        }
+        // // Delete the avatar from cloudinary
+        // if (user.avatar !== undefined){
+        //     for (let i = 0; i < user.avatar.length; i++) {
+        //         await cloudinary.uploader.destroy(user.avatar[i].public_id);
+        //     }
+        // }
 
         // Delete the user from the database
         user = await user.deleteOne()
@@ -274,9 +334,10 @@ const deleteUser = asyncHandler(async (req, res) => {
 
 module.exports = {
     getAllUsers,
+    getUserInfo,
+    getUserOrders,
+    getUserStats,
     createNewUser,
     updateUser,
     deleteUser,
-    getUserInfo,
-    getUserOrders
 }
